@@ -18,16 +18,16 @@ use function date;
 /**
  * @internal
  */
-class LoggerMessage {
+class LogMessage {
 
-    protected LoggerMessageVerbosity $verbosity;
+    protected LogMessageVerbosity $verbosity;
 
     protected int $verbosityValue;
 
     public function __construct(
         protected string $message = '',
         protected ?string $date = null,
-        protected string $verbosityKey = AbstractLogger::VERBOSITY_KEY_NORMAL
+        protected string $verbosityKey = LogAbstract::VERBOSITY_KEY_NORMAL
     ) {
         $this->setDate($this->date);
         $this->setVerbosityByKey($this->verbosityKey);
@@ -39,7 +39,7 @@ class LoggerMessage {
 
     public function setDate(?string $date): void {
         if ($date === null || $date === '') {
-            $this->date = date(AbstractLogger::DEFAULT_DATE_FORMAT);
+            $this->date = date(LogAbstract::DEFAULT_DATE_FORMAT);
         } else {
             $this->date = $date;
         }
@@ -47,14 +47,14 @@ class LoggerMessage {
 
     protected function setVerbosityByKey(string $verbosityKey): void {
         $this->verbosityKey = $verbosityKey;
-        $this->verbosityValue = AbstractLogger::getVerbosityValue($verbosityKey);
-        $this->verbosity = new LoggerMessageVerbosity($this->verbosityKey, $this->verbosityValue);
+        $this->verbosityValue = LogAbstract::getVerbosityValue($verbosityKey);
+        $this->verbosity = new LogMessageVerbosity($this->verbosityKey, $this->verbosityValue);
     }
 
     public function setVerbosityByValue(int $verbosityValue): void {
-        $this->verbosityKey = AbstractLogger::getVerbosityKey($verbosityValue);
+        $this->verbosityKey = LogAbstract::getVerbosityKey($verbosityValue);
         $this->verbosityValue = $verbosityValue;
-        $this->verbosity = new LoggerMessageVerbosity($this->verbosityKey, $this->verbosityValue);
+        $this->verbosity = new LogMessageVerbosity($this->verbosityKey, $this->verbosityValue);
     }
 
     public function getMessage(): string {
@@ -65,7 +65,7 @@ class LoggerMessage {
         return $this->date;
     }
 
-    public function getVerbosity(): LoggerMessageVerbosity {
+    public function getVerbosity(): LogMessageVerbosity {
         return $this->verbosity;
     }
 

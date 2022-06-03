@@ -19,48 +19,52 @@ use function is_object;
 use InvalidArgumentException;
 use UnexpectedValueException;
 
-class BaseLogger extends AbstractLogger {
+class LogBasic extends LogAbstract {
 
     /**
      * @throws InvalidArgumentException
      */
-    public function __construct(protected string $verbosityKey, protected string $dateFormat = self::DEFAULT_DATE_FORMAT, protected string $messageFormat = self::DEFAULT_MESSAGE_FORMAT) {
+    public function __construct(
+        protected string $verbosityKey = self::VERBOSITY_KEY_NORMAL,
+        protected string $dateFormat = self::DEFAULT_DATE_FORMAT,
+        protected string $messageFormat = self::DEFAULT_MESSAGE_FORMAT
+        ) {
         if (!self::isVerbosityKeyValid($this->verbosityKey)) {
             throw new InvalidArgumentException('verbosityKey is invalid: ' . $this->verbosityKey);
         }
     }
 
-    protected function log(string $message, string $verbosityKey = self::VERBOSITY_KEY_NORMAL): LoggerMessage {
-        $messageObject = new LoggerMessage($message, date($this->dateFormat), $verbosityKey);
+    protected function log(string $message, string $verbosityKey = self::VERBOSITY_KEY_NORMAL): LogMessage {
+        $messageObject = new LogMessage($message, date($this->dateFormat), $verbosityKey);
         $this->messages[] = $messageObject;
         return $messageObject;
     }
 
-    public function error(string $message): LoggerMessage {
+    public function error(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_ERROR);
     }
 
-    public function warning(string $message): LoggerMessage {
+    public function warning(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_WARNING);
     }
 
-    public function info(string $message): LoggerMessage {
+    public function info(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_INFO);
     }
 
-    public function normal(string $message): LoggerMessage {
+    public function normal(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_NORMAL);
     }
 
-    public function verbose(string $message): LoggerMessage {
+    public function verbose(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_VERBOSE);
     }
 
-    public function veryverbose(string $message): LoggerMessage {
+    public function veryverbose(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_VERYVERBOSE);
     }
 
-    public function debug(string $message): LoggerMessage {
+    public function debug(string $message): LogMessage {
         return $this->log($message, self::VERBOSITY_KEY_DEBUG);
     }
 
@@ -74,7 +78,7 @@ class BaseLogger extends AbstractLogger {
     public function getMessagesByVerbosityKey(string $verbosityKey): array {
         $messages = [];
         foreach ($this->messages as $message) {
-            if (is_object($message) && $message instanceof LoggerMessage) {
+            if (is_object($message) && $message instanceof LogMessage) {
                 if (self::getVerbosityValue($verbosityKey) >= $message->getVerbosityValue()) {
                     $messages[] = $message;
                 }
@@ -99,17 +103,17 @@ class BaseLogger extends AbstractLogger {
         return $this->getMessagesByVerbosityKey($this->verbosityKey);
     }
 
-    public function getFormattedMessage(LoggerMessage $message, bool $isHTML = false): string {
+    public function getFormattedMessage(LogMessage $messageObject, bool $isHTML = false): string {
         $formattedMessage = sprintf(
             $this->messageFormat,
-            $message->getDate(),
-            ucfirst($message->getVerbosityKey()),
-            ($isHTML) ? htmlentities($message->getMessage()) : $message->getMessage()
+            $messageObject->getDate(),
+            ucfirst($messageObject->getVerbosityKey()),
+            ($isHTML) ? htmlentities($messageObject->getMessage()) : $messageObject->getMessage()
         );
         if ($isHTML) {
             $fontColor = '#5f5f5f';
             $backgroundColor = 'unset';
-            switch ($message->getVerbosityKey()) {
+            switch ($messageObject->getVerbosityKey()) {
                 case self::VERBOSITY_KEY_ERROR:
                     $fontColor =  '#ff0000';
                     break;
@@ -155,7 +159,7 @@ class BaseLogger extends AbstractLogger {
     public function getFormattedMessages(bool $isHTML = false): string {
         $messages = '';
         foreach ($this->messages as $message) {
-            if (is_object($message) && $message instanceof LoggerMessage) {
+            if (is_object($message) && $message instanceof LogMessage) {
                 $messages .= $this->getFormattedMessage($message, $isHTML);
             } else {
                 throw new UnexpectedValueException('Message is not type of LoggerMessage: ' . print_r($message, true));
@@ -170,7 +174,7 @@ class BaseLogger extends AbstractLogger {
     public function getFormattedMessagesByVerbosityKey(string $verbosityKey, bool $isHTML = false): string {
         $messages = '';
         foreach ($this->messages as $message) {
-            if (is_object($message) && $message instanceof LoggerMessage) {
+            if (is_object($message) && $message instanceof LogMessage) {
                 if (self::getVerbosityValue($verbosityKey) >= $message->getVerbosityValue()) {
                     $messages .= $this->getFormattedMessage($message, $isHTML);
                 }

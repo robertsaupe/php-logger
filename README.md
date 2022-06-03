@@ -22,4 +22,53 @@ composer require robertsaupe/php-logger
 
 ## Getting started
 
-work in progress ...
+### Basic
+
+```php
+use robertsaupe\Logger\LogBasic;
+
+$logger = new LogBasic();
+
+$logger->error('error');
+$logger->warning('warning');
+$logger->info('info');
+$logger->normal('normal');
+$logger->verbose('verbose');
+$logger->veryverbose('veryverbose');
+$logger->debug('debug');
+
+//return messageObject
+$message = $logger->normal("Testmessage");
+print_r($message);
+print_r($message->getArray());
+
+//return all messages
+print($logger->getFormattedMessagesByVerbosity());
+
+//return all messages as html
+print($logger->getFormattedMessagesByVerbosity(true));
+```
+
+### File
+
+```php
+use robertsaupe\Logger\LogFile;
+
+$logger = new LogFile(dirname(__DIR__).'/logs', 'test');
+
+//now writes the messages to a log-file
+```
+
+### HTML
+
+```php
+use robertsaupe\Logger\LogHTML;
+
+$logger = new LogHTML(dirname(__DIR__).'/logs', 'test');
+
+//now writes the messages to a html-file
+```
+
+## Credits
+
+- [Symfony](https://github.com/symfony) for [Filesystem](https://symfony.com/doc/current/components/filesystem.html)

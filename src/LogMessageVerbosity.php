@@ -16,11 +16,11 @@ namespace robertsaupe\Logger;
 /**
  * @internal
  */
-class LoggerMessageVerbosity {
+class LogMessageVerbosity {
 
     public function __construct(
-        protected string $key = AbstractLogger::VERBOSITY_KEY_NORMAL,
-        protected int $value = AbstractLogger::VERBOSITY_VALUE_NORMAL
+        protected string $key = LogAbstract::VERBOSITY_KEY_NORMAL,
+        protected int $value = LogAbstract::VERBOSITY_VALUE_NORMAL
     ) {
         
     }

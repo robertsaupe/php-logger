@@ -5,7 +5,14 @@
         "php",
         "php8",
         "library",
-        "logger"
+        "logger",
+        "log",
+        "filelogger",
+        "filelog",
+        "logging",
+        "html",
+        "htmllogger",
+        "htmllogging"
     ],
     "homepage": "https://github.com/robertsaupe/php-logger",
     "type": "library",

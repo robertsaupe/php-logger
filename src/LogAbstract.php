@@ -16,7 +16,7 @@ namespace robertsaupe\Logger;
 /**
  * create a logger
  */
-abstract class AbstractLogger {
+abstract class LogAbstract {
 
     public const VERBOSITY_KEY_QUIT = 'quit';
     public const VERBOSITY_KEY_ERROR = 'error';
@@ -115,31 +115,29 @@ abstract class AbstractLogger {
         };
     }
 
-    abstract public function __construct(string $verbosityKey, string $dateFormat, string $messageFormat);
+    abstract protected function log(string $message, string $verbosityKey): LogMessage;
 
-    abstract protected function log(string $message, string $verbosityKey): LoggerMessage;
+    abstract public function error(string $message): LogMessage;
 
-    abstract public function error(string $message): LoggerMessage;
+    abstract public function warning(string $message): LogMessage;
 
-    abstract public function warning(string $message): LoggerMessage;
+    abstract public function info(string $message): LogMessage;
 
-    abstract public function info(string $message): LoggerMessage;
+    abstract public function normal(string $message): LogMessage;
 
-    abstract public function normal(string $message): LoggerMessage;
-
-    public function write(string $message): LoggerMessage {
+    public function write(string $message): LogMessage {
         return $this->normal($message);
     }
 
-    abstract public function verbose(string $message): LoggerMessage;
+    abstract public function verbose(string $message): LogMessage;
 
-    abstract public function veryverbose(string $message): LoggerMessage;
+    abstract public function veryverbose(string $message): LogMessage;
 
-    public function veryveryverbose(string $message): LoggerMessage {
+    public function veryveryverbose(string $message): LogMessage {
         return $this->debug($message);
     }
 
-    abstract public function debug(string $message): LoggerMessage;
+    abstract public function debug(string $message): LogMessage;
 
     abstract public function getMessages(): array;
 
@@ -147,7 +145,7 @@ abstract class AbstractLogger {
 
     abstract public function getMessagesByVerbosityValue(int $verbosityValue): array;
 
-    abstract public function getFormattedMessage(LoggerMessage $message, bool $isHTML): string;
+    abstract public function getFormattedMessage(LogMessage $message, bool $isHTML): string;
 
     abstract public function getFormattedMessages(bool $isHTML): string;
 
