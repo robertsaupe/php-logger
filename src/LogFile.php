@@ -13,27 +13,26 @@ declare(strict_types=1);
 
 namespace robertsaupe\Logger;
 
-use function sprintf;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 class LogFile extends LogBasic {
 
+    public const DEFAULT_FILE_BASE_PATH = 'logs';
+    public const DEFAULT_FILE_BASE_NAME = '';
     public const DEFAULT_FILE_EXTENSION = 'log';
-
     public const DEFAULT_FILE_DATE_FORMAT = 'Y-m-d_H-i-s';
+    public const DEFAULT_CHMOD = 0600;
 
     protected Filesystem $fileSystem;
-
     protected string $filePath;
-
     protected bool $isWritable = true;
 
     public function __construct(
-        protected string $fileBasePath,
-        protected string $fileBaseName,
-        protected int|float $chmod = 0600,
+        protected string $fileBasePath = self::DEFAULT_FILE_BASE_PATH,
+        protected string $fileBaseName = self::DEFAULT_FILE_BASE_NAME,
+        protected int|float $chmod = self::DEFAULT_CHMOD,
         protected string $fileExtension = self::DEFAULT_FILE_EXTENSION,
         protected string $fileDateFormat = self::DEFAULT_FILE_DATE_FORMAT,
         protected string $verbosityKey = self::VERBOSITY_KEY_NORMAL,
@@ -49,13 +48,7 @@ class LogFile extends LogBasic {
         $this->fileExtension = trim($this->fileExtension);
         $this->fileDateFormat = trim($this->fileDateFormat);
 
-        $this->filePath = sprintf(
-            '%s/%s_%s.%s',
-            $this->fileBasePath,
-            date($this->fileDateFormat),
-            $this->fileBaseName,
-            $this->fileExtension
-        );
+        $this->filePath = $this->fileBasePath . '/' . date($this->fileDateFormat) . ($this->fileBaseName == '' ? '' : '_' . $this->fileBaseName) . '.' . $this->fileExtension;
 
         $this->mkdir();
         $this->writeToFile('');
@@ -91,7 +84,7 @@ class LogFile extends LogBasic {
     protected function chmod(): void {
         if ($this->isWritable) {
             try{
-                $this->fileSystem->chmod($this->filePath, $this->chmod);
+                $this->fileSystem->chmod($this->filePath, (int)$this->chmod);
             } catch (IOExceptionInterface $exception) {
                 $this->isWritable = false;
                 throw $exception;
