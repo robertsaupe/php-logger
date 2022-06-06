@@ -25,23 +25,26 @@ class LogMessageVerbosity {
         
     }
 
-    public function setKey($key) {
+    public function setKey(string $key): void {
         $this->key = $key;
     }
 
-    public function setValue($value) {
+    public function setValue(int $value): void {
         $this->value = $value;
     }
 
-    public function getKey() {
+    public function getKey(): string {
         return $this->key;
     }
 
-    public function getValue() {
+    public function getValue(): int {
         return $this->value;
     }
 
-    public function getArray() {
+    /**
+     * @return mixed[] LogMessageVerbosity as Array
+     */
+    public function getArray(): array {
         return [
             'key' => $this->key,
             'value' => $this->value,

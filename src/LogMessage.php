@@ -77,6 +77,9 @@ class LogMessage {
         return $this->verbosityValue;
     }
 
+    /**
+     * @return mixed[] LogMessage as Array
+     */
     public function getArray(): array {
         return [
             'message' => $this->message,
